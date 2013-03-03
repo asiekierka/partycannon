@@ -1,0 +1,14 @@
+{
+ "name": "mintyfresh",
+ "description": "MintyFresh IRC bot",
+ "version": "0.0.1",
+ "private": "true",
+ "dependencies": {
+  "JSON2": ">=0.1.0",
+  "underscore": "1.4.x",
+  "async": ">=0.2.5",
+  "optimist": "0.3.x",
+  "underscore.string": "2.x",
+  "irc": "0.3.x"
+ }
+}

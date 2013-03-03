@@ -1,0 +1,13 @@
+{
+ "nickname": "MintyFresh",
+ "server": "irc.rizon.net",
+ "channels": ["#MintyFresh"],
+ "prefix": "&",
+ "maxDistance": 3,
+ "maxLength": 384,
+ "rateLimit": 5,
+ "apis": {
+   "google": "[CIACH]",
+   "googleCx": "[CIAAACH]"
+ }
+}
