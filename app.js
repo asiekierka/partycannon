@@ -144,7 +144,6 @@ util.send = _.bind(client.send,client);
 util.client = client;
 util.global = global;
 
-
 loadConfig(true);
 
 client.addListener("message",reply);

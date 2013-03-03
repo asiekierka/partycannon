@@ -10,5 +10,8 @@
    "google": "[CIACH]",
    "googleCx": "[CIAAACH]"
  },
- "plugins": ["google.js", "ratelimit.js"]
+ "plugins": ["google.js", "ratelimit.js", "logs.js"],
+ "logs": {
+    "max": 50
+  }
 }
