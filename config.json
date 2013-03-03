@@ -9,5 +9,6 @@
  "apis": {
    "google": "[CIACH]",
    "googleCx": "[CIAAACH]"
- }
+ },
+ "plugins": ["google.js", "ratelimit.js"]
 }

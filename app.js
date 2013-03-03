@@ -11,7 +11,7 @@ _.str = require('underscore.string');
 _.mixin(_.str.exports());
 
 var client = null;
-var commands = {};
+var commands = [];
 var config = null;
 var plugins = {};
 var util = {};
@@ -37,7 +37,11 @@ function loadPlugins() {
     if(cont) {
       console.log("Loaded!");
       plugins[plugin.info.shortname || pluginName] = plugin;
-      _.each(plugin.commands, function(func, cmd) { commands[cmd] = plugin.commands[cmd]; });
+      _.each(plugin.commands, function(func, cmd) {
+        var c = _(commands[cmd]);
+        if(!c.isArray() && !c.isFunction()) commands[cmd] = [];
+        commands[cmd].push(plugin.commands[cmd]);
+      });
     }
   });
   console.log("Currently loaded commands: " + _(commands).keys());
@@ -69,19 +73,29 @@ function parseCommand(msg) {
   return command;
 }
 
-function getCommandName(src) {
-  var distances = _.chain(_(commands).functions()).map(function(name) {
+function getCommandNames(src) {
+  var functions = _(commands).keys();
+  var distances = _.chain(functions).map(function(name) {
     return {n: name, l: _.levenshtein(src,name)};
   }).sortBy(function(n){ return n.l; }).value();
-  var n = distances[0];
-  if(n.l > config.maxDistance) return null;
-  else return n.n;
+  if(distances[0].l > config.maxDistance) return null;
+  else return _(distances).pluck("n");
 }
 
 function runCommand(from, to, cmd) {
-  var cmdName = getCommandName(cmd.shift());
-  if(!cmdName) return;
-  onEvent("onCommand",[from,to,cmdName,cmd],function() { commands[cmdName](from,to,cmd); });
+  var cmdNames = getCommandNames(cmd.shift());
+  if(!cmdNames) return;
+  async.eachSeries(cmdNames,function(cmdName,next){
+    console.log(cmdName);
+    if(!commands[cmdName]) return;
+    onEvent("onCommand",[from,to,cmdName,cmd],function() {
+      if(_.isFunction(commands[cmdName])) command(from,to,cmd,next);
+      else async.eachSeries(commands[cmdName],function(command,next2){
+        console.log("c");
+        command(from,to,cmd,next2);
+      },next);
+    });
+  });
 }
 
 function onEvent(funcName,args,callback) {
@@ -106,10 +120,11 @@ function reply(from, to, message) {
 commands.reload = function(sender,target,args) {
   loadConfig(true);
   util.saySender(target,sender,"Config reloaded!");
-}
-commands.bestpony = function(sender,target,args) {
+};
+
+commands.bestpony = [function(sender,target,args,next) {
   util.saySender(target,sender,"Serenity is best pony <3");
-}
+}];
 
 loadConfig(false);
 
