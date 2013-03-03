@@ -94,7 +94,8 @@ function runCommand(from, to, cmd) {
     console.log(cmdName);
     if(!commands[cmdName]) return;
     onEvent("onCommand",[from,to,cmdName,cmd],function() {
-      if(_.isFunction(commands[cmdName])) command(from,to,cmd,next);
+      if(_.isFunction(commands[cmdName]))
+        commands[cmdName](from,to,cmd,next);
       else async.eachSeries(commands[cmdName],function(command,next2){
         console.log("c");
         command(from,to,cmd,next2);
