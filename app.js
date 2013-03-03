@@ -11,10 +11,13 @@ _.str = require('underscore.string');
 _.mixin(_.str.exports());
 
 var client = null;
-var commands = [];
+var commands = {};
 var config = null;
 var plugins = {};
 var util = {};
+var global = {};
+global.plugins = {};
+global.channels = {};
 
 util.isChannel = function(s) { return _.startsWith(s,"#"); }
 util.time = function(){ return Math.round(new Date().getTime() / 1000); }
@@ -36,7 +39,8 @@ function loadPlugins() {
     if(plugin.onLoad) cont = plugin.onLoad(config, util);
     if(cont) {
       console.log("Loaded!");
-      plugins[plugin.info.shortname || pluginName] = plugin;
+      global.plugins[plugin.info.shortname] = {};
+      plugins[plugin.info.shortname] = plugin;
       _.each(plugin.commands, function(func, cmd) {
         var c = _(commands[cmd]);
         if(!c.isArray() && !c.isFunction()) commands[cmd] = [];
@@ -53,6 +57,7 @@ function loadConfig(loadPlugs) {
     _.each(plugins,function(plugin) {
       console.log("[-] "+plugin.filename);
       if(plugin.onUnload) plugin.onUnload();
+      delete global.plugins[plugin.info.shortname];
       // Unload commands
       _.each(plugin.commands, function(func, cmd) { delete commands["cmd"]; });
     });
@@ -131,9 +136,14 @@ loadConfig(false);
 client = new irc.Client(config.server, config.nickname, {
   channels: config.channels
 });
+
+_.each(config.channels,function(channel){ global.channels[channel] = {}; });
+
 util.say = _.bind(client.say,client);
 util.send = _.bind(client.send,client);
 util.client = client;
+util.global = global;
+
 
 loadConfig(true);
 
