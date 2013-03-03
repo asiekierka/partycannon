@@ -24,7 +24,7 @@ exports.onLoad = function(conf,api) {
 }
 
 exports.commands = {};
-exports.commands.google = function(sender, target, args) {
+exports.commands.google = function(sender, target, args, next) {
   if(args.length == 0) { util.saySender(target,sender,"No query given!"); return; }
   var url = "https://www.googleapis.com/customsearch/v1?"
             + qs.stringify({key: config.apis.google,
@@ -37,7 +37,10 @@ exports.commands.google = function(sender, target, args) {
     res.on('data', function(c){data+=c;});
     res.on('end', function() {
       var ans = JSON.parse(data);
-      console.log(data);
+      if(ans.error) {
+        util.saySender(target,sender,"Error: "+ans.error.message);
+        return;
+      }
       var out = "Results: ";
       var r = 0;
       _.each(ans.items,function(item){ r+=1;
