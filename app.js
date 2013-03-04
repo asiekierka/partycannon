@@ -44,17 +44,14 @@ function loadPlugins() {
   _.each(config.plugins, function(pluginName) {
     var plugin = require("./plugins/"+pluginName);
     plugin.filename = pluginName;
-    if(!plugin.commands) console.log("[+] " + pluginName);
-    else console.log("[+] " + pluginName + " (Commands: "+_(plugin.commands).keys()+")");
     var cont = true;
     if(plugin.onLoad) cont = plugin.onLoad(config, util);
     if(cont) {
-      console.log("Loaded!");
+      if(!plugin.commands) console.log("[+] " + pluginName);
+      else console.log("[+] " + pluginName + " (Commands: "+_(plugin.commands).keys()+")");
       global.plugins[plugin.info.shortname] = {};
       plugins[plugin.info.shortname] = plugin;
-      _.each(plugin.commands, function(func, cmd) {
-        util.addCommand(cmd,func);
-      });
+      _.each(plugin.commands, function(func,cmd){ util.addCommand(cmd,func); });
     }
   });
   console.log("Currently loaded commands: " + _(commands).keys());
@@ -149,8 +146,11 @@ client = new irc.Client(config.server, config.nickname, {
 
 _.each(config.channels,function(channel){ global.channels[channel] = {}; });
 
-util.say = _.bind(client.say,client);
-util.send = _.bind(client.send,client);
+_.each(new Array("say","action","send","join","part","list","ctcp"),
+  function(v) {
+    util[v] = _.bind(client[v],client);
+  }
+);
 util.client = client;
 util.global = global;
 
