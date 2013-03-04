@@ -27,6 +27,17 @@ util.saySender = function(channel, sender, msgo) {
   client.say(channel,sender+": "+msg);
 }
 
+util.addCommand = function(cmd, handler) {
+  var c = _(commands[cmd]);
+  if(!c.isArray() && !c.isFunction()) commands[cmd] = [];
+  commands[cmd].push(handler);
+}
+
+util.deleteCommand = function(cmd, handler) {
+  commands[cmd] = _(commands[cmd]).without(handler);
+  if(commands[cmd].length == 0) delete commands[cmd];
+}
+
 function loadPlugins() {
   console.log("Loading plugins");
   plugins = [];
@@ -42,9 +53,7 @@ function loadPlugins() {
       global.plugins[plugin.info.shortname] = {};
       plugins[plugin.info.shortname] = plugin;
       _.each(plugin.commands, function(func, cmd) {
-        var c = _(commands[cmd]);
-        if(!c.isArray() && !c.isFunction()) commands[cmd] = [];
-        commands[cmd].push(plugin.commands[cmd]);
+        util.addCommand(cmd,func);
       });
     }
   });
@@ -59,7 +68,7 @@ function loadConfig(loadPlugs) {
       if(plugin.onUnload) plugin.onUnload();
       delete global.plugins[plugin.info.shortname];
       // Unload commands
-      _.each(plugin.commands, function(func, cmd) { delete commands["cmd"]; });
+      _.each(plugin.commands, function(func,cmd){ util.deleteCommand(cmd,func); });
     });
   }
   config = require("./config.json");
