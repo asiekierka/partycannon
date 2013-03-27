@@ -1,8 +1,8 @@
 {
  "nickname": "MintyFresh",
- "server": "irc.rizon.net",
- "channels": ["#MintyFresh"],
- "prefix": "&",
+ "server": "irc.freenode.net",
+ "channels": ["#FlufflePuff"],
+ "prefix": "!",
  "maxDistance": 3,
  "maxLength": 384,
  "rateLimit": 5,
@@ -10,8 +10,12 @@
    "google": "[CIACH]",
    "googleCx": "[CIAAACH]"
  },
- "plugins": ["google.js", "ratelimit.js", "logs.js"],
+ "plugins": ["users.js", "tcb.js", "logs.js", "regex.js", "hug.js"],
  "logs": {
-    "max": 50
-  }
+    "max": 100
+ },
+ "groups": {
+    "default": { "blacklist": ["reload"] },
+    "op": { "whitelist": "*", "prefix": "@" }
+ }
 }

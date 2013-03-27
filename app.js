@@ -29,7 +29,7 @@ util.saySender = function(channel, sender, msgo) {
 
 util.addCommand = function(cmd, handler) {
   var c = _(commands[cmd]);
-  if(!c.isArray() && !c.isFunction()) commands[cmd] = [];
+  if(!c.isArray()) commands[cmd] = [];
   commands[cmd].push(handler);
 }
 
@@ -54,7 +54,7 @@ function loadPlugins() {
       _.each(plugin.commands, function(func,cmd){ util.addCommand(cmd,func); });
     }
   });
-  console.log("Currently loaded commands: " + _(commands).keys());
+  console.log("Currently loaded commands: " + _(commands).keys().join(", "));
 }
 
 function loadConfig(loadPlugs) {
@@ -64,6 +64,7 @@ function loadConfig(loadPlugs) {
       console.log("[-] "+plugin.filename);
       if(plugin.onUnload) plugin.onUnload();
       delete global.plugins[plugin.info.shortname];
+      delete require.cache[require.resolve("./plugins/"+plugin.filename)];
       // Unload commands
       _.each(plugin.commands, function(func,cmd){ util.deleteCommand(cmd,func); });
     });
@@ -97,13 +98,9 @@ function runCommand(from, to, cmd) {
   var cmdNames = getCommandNames(cmd.shift());
   if(!cmdNames) return;
   async.eachSeries(cmdNames,function(cmdName,next){
-    console.log(cmdName);
     if(!commands[cmdName]) return;
     onEvent("onCommand",[from,to,cmdName,cmd],function() {
-      if(_.isFunction(commands[cmdName]))
-        commands[cmdName](from,to,cmd,next);
-      else async.eachSeries(commands[cmdName],function(command,next2){
-        console.log("c");
+      async.eachSeries(commands[cmdName],function(command,next2){
         command(from,to,cmd,next2);
       },next);
     });
@@ -129,13 +126,23 @@ function reply(from, to, message) {
   });
 }
 
-commands.reload = function(sender,target,args) {
+commands.reload = [function(sender,target,args) {
   loadConfig(true);
   util.saySender(target,sender,"Config reloaded!");
-};
+}];
+
+commands.plugins = [function(sender,target,args) {
+  var list = _(plugins).keys().join(", ");
+  util.saySender(target,sender,"Plugins: " + list);
+}];
 
 commands.bestpony = [function(sender,target,args,next) {
   util.saySender(target,sender,"Serenity is best pony <3");
+}];
+
+commands.commands = [function(sender,target,args,next) {
+  var list = _(commands).keys().join(", ");
+  util.saySender(target,sender,"Commands: " + list);  
 }];
 
 loadConfig(false);
