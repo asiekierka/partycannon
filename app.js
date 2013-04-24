@@ -1,4 +1,5 @@
 var    _ = require("underscore")
+  ,   fs = require("fs")
   , JSON = require("JSON2")
   , argv = require("optimist").argv
   ,  irc = require("irc")
@@ -126,6 +127,10 @@ function reply(from, to, message) {
   });
 }
 
+function onAction(from, to, message) {
+  onEvent("onAction",[from,to,message],function(){});
+}
+
 commands.reload = [function(sender,target,args) {
   loadConfig(true);
   util.saySender(target,sender,"Config reloaded!");
@@ -147,9 +152,7 @@ commands.commands = [function(sender,target,args,next) {
 
 loadConfig(false);
 
-client = new irc.Client(config.server, config.nickname, {
-  channels: config.channels
-});
+client = new irc.Client(config.server, config.nickname, config.serverOptions);
 
 _.each(config.channels,function(channel){ global.channels[channel] = {}; });
 
@@ -164,3 +167,8 @@ util.global = global;
 loadConfig(true);
 
 client.addListener("message",reply);
+client.addListener("action",onAction);
+
+client.addListener('error', function(message) {
+    console.error('ERROR: %s: %s', message.command, message.args.join(' '));
+});
