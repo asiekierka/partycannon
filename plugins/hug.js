@@ -28,10 +28,13 @@ exports.commands.hug = function(sender, target, args, next) {
   var hugMsg = hugTypes[_.random(hugTypes.length-1)].replace("%s",hugTarget);
   util.action(target,hugMsg);
 };
-exports.onAction = function(from, to, message) {
+exports.onAction = function(from, to, msgo) {
+  var message = _.trim(msgo).toLowerCase();
   _.each(hugTypes,function(type) {
     var message2 = type.replace("%s",config.nickname);
-    if(message2.toLowerCase() === message.toLowerCase()) {
+    var message3 = type.replace(" %s","");
+    if((message2.toLowerCase() === message)
+       || (_(message).startsWith(message3.toLowerCase()) && message.indexOf(config.nickname) !== -1) ) {
       if(Math.random() < 0.4) {
         var hugMsg = hugReactions[_.random(hugReactions.length-1)].replace("%s",from);
         util.action(to,hugMsg);
