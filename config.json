@@ -1,8 +1,8 @@
 {
- "nickname": "MintyFresh",
+ "nickname": "PartyPone",
  "server": "irc.freenode.net",
  "serverOptions": {
-   "channels": [],
+   "channels": [""],
    "port": 6667,
    "debug": true
  },
