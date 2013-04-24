@@ -33,7 +33,7 @@ exports.onAction = function(from, to, msgo) {
   _.each(hugTypes,function(type) {
     var message2 = type.replace("%s",config.nickname);
     var message3 = type.replace(" %s","");
-    if((message2.toLowerCase() === message)
+    if(_(message).startsWith(message2.toLowerCase()))
        || (_(message).startsWith(message3.toLowerCase()) && message.indexOf(config.nickname) !== -1) ) {
       if(Math.random() < 0.4) {
         var hugMsg = hugReactions[_.random(hugReactions.length-1)].replace("%s",from);
