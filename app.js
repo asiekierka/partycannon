@@ -157,7 +157,7 @@ commands.plugins = [function(sender,target,args) {
 }];
 
 commands.bestpony = [function(sender,target,args,next) {
-  util.saySender(target,sender,"Serenity is best pony <3");
+  util.saySender(target,sender,"Fluttershy is best pony!");
 }];
 
 commands.commands = [function(sender,target,args,next) {
