@@ -22,6 +22,12 @@ var global = {};
 global.plugins = {};
 global.channels = {};
 
+util.parseLanguage = function(conf,languages) {
+  var lt = languages["en"] || languages[conf.language] || {};
+  if(_(languages).contains(conf.language))
+    lt = _.extend(lt,languages[conf.language]);
+  return lt;
+}
 util.isChannel = function(s) { return _.startsWith(s,"#"); }
 util.time = function(){ return Math.round(new Date().getTime() / 1000); }
 util.saySender = function(channel, sender, msgo) {
