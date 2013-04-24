@@ -1,6 +1,7 @@
 {
  "nickname": "MintyFresh",
  "server": "irc.freenode.net",
+ "server": "",
  "serverOptions": {
    "channels": [],
    "port": 6667,

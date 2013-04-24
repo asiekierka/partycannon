@@ -23,7 +23,13 @@ global.plugins = {};
 global.channels = {};
 
 util.parseLanguage = function(conf,languages) {
+<<<<<<< HEAD
   var lt = _.defaults(languages[conf.language],languages["en"]) || {};
+=======
+  var lt = languages["en"] || languages[conf.language] || {};
+  if(_(languages).contains(conf.language))
+    lt = _.extend(lt,languages[conf.language]);
+>>>>>>> e56f3167d5b7e69752924961b88dc7f202b15dfe
   return lt;
 }
 util.isChannel = function(s) { return _.startsWith(s,"#"); }
