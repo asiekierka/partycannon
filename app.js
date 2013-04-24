@@ -22,6 +22,10 @@ var global = {};
 global.plugins = {};
 global.channels = {};
 
+util.parseLanguage = function(conf,languages) {
+  var lt = _.defaults(languages[conf.language],languages["en"]) || {};
+  return lt;
+}
 util.isChannel = function(s) { return _.startsWith(s,"#"); }
 util.time = function(){ return Math.round(new Date().getTime() / 1000); }
 util.saySender = function(channel, sender, msgo) {
@@ -94,6 +98,7 @@ function getCommandNames(src) {
     return {n: name, l: _.levenshtein(src,name)};
   }).sortBy(function(n){ return n.l; }).value();
   if(distances[0].l > config.maxDistance) return null;
+  if(distances[0].l > 0 && distances[0].n.length < config.minDistanceCmdLength) return null;
   else return _(distances).pluck("n");
 }
 

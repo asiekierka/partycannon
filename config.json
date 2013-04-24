@@ -1,18 +1,27 @@
 {
  "nickname": "MintyFresh",
  "server": "irc.freenode.net",
- "channels": ["#FlufflePuff"],
+ "serverOptions": {
+   "channels": [],
+   "port": 6667,
+   "debug": true
+ },
+ "language": "pl",
  "prefix": "!",
  "maxDistance": 3,
+ "minDistanceCmdLength": 5,
  "maxLength": 384,
  "rateLimit": 5,
  "apis": {
    "google": "[CIACH]",
    "googleCx": "[CIAAACH]"
  },
- "plugins": ["users.js", "tcb.js", "logs.js", "regex.js", "hug.js"],
+ "plugins": ["users.js", "logs.js", "regex.js", "hug.js", "8ball.js"],
  "logs": {
     "max": 100
+ },
+ "users": {
+   "asie": "op"
  },
  "groups": {
     "default": { "blacklist": ["reload"] },
