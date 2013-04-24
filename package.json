@@ -1,7 +1,7 @@
 {
- "name": "mintyfresh",
- "description": "MintyFresh IRC bot",
- "version": "0.0.1",
+ "name": "partycannon",
+ "description": "PartyCannon IRC bot",
+ "version": "0.1",
  "private": "true",
  "dependencies": {
   "JSON2": ">=0.1.0",
