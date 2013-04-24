@@ -11,6 +11,8 @@ var    _ = require("underscore")
 _.str = require('underscore.string');
 _.mixin(_.str.exports());
 
+var punctuation = [".",",",":",";","?","!"];
+
 var client = null;
 var commands = {};
 var config = null;
@@ -119,11 +121,19 @@ function onEvent(funcName,args,callback) {
   },function(){callback();});
 }
 
+function command(from, to, message) {
+  var cmd = parseCommand(message);
+  if(cmd) runCommand(from,to,cmd);
+}
 function reply(from, to, message) {
   if(!util.isChannel(to)) return;
   onEvent("onMessage",[from,to,message],function(){
-    var cmd = parseCommand(message);
-    if(cmd) runCommand(from,to,cmd);
+    if(_.find(punctuation,function(p){
+      return _(message.toLowerCase()).startsWith(config.nickname.toLowerCase()+p);
+    })) {
+      var outmsg = _.trim(message.substr(config.nickname.length+1));
+      onEvent("onHighlight",[from,to,message],function(){});
+    } else command(from,to,message);
   });
 }
 
