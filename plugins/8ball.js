@@ -8,11 +8,13 @@ exports.info = {
 var languages = {
   "en": {
     answers: ["Yes!", "Yes.", "No!", "No.", "Maybe?", "Maybe."],
-    answersOr: ["The former.", "The former!", "Definitely the former.", "The latter.", "The latter!", "Definitely the latter."]
+    answersOr: ["The former.", "The former!", "Definitely the former.", "The latter.", "The latter!", "Definitely the latter."],
+    orWord: [" or "]
   },
   "pl": {
     answers: ["Tak!", "Tak.", "Nie!", "Nie.", "Może?", "Może."],
-    answersOr: ["To pierwsze.", "To pierwsze!", "Raczej to pierwsze.", "To drugie!", "To drugie.", "Raczej to drugie."]
+    answersOr: ["To pierwsze.", "To pierwsze!", "Raczej to pierwsze.", "To drugie!", "To drugie.", "Raczej to drugie."],
+    orWord: [" lub ", " albo "]
   }
 }
 var language = {};
@@ -28,8 +30,10 @@ exports.onHighlight = function(from, to, message) {
   var isQuestion = (msgl.indexOf("?") !== -1);
   if(isQuestion) {
     var ans = from + ": " + language.answers[_.random(language.answers.length-1)];
-    if(msgl.indexOf(" or ") !== -1)
-      ans = from + ": " + language.answersOr[_.random(language.answersOr.length-1)];
+    _.each(language.orWord, function(ow) {
+      if(msgl.indexOf(ow) !== -1)
+        ans = from + ": " + language.answersOr[_.random(language.answersOr.length-1)];
+    });
     util.say(to,ans);
   }
 }
