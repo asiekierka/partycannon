@@ -24,7 +24,6 @@ var _ = require("underscore");
 exports.onLoad = function(conf,api) {
   config = conf; util = api; language = api.parseLanguage(conf,languages); return true;
 }
-exports.commands = {};
 exports.onHighlight = function(from, to, message) {
   var msgl = _.trim(message.toLowerCase());
   var isQuestion = (msgl.indexOf("?") !== -1);
